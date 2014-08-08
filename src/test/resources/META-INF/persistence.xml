@@ -11,11 +11,11 @@
         	<properties>
         		<!--  <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>-->
         		<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-        		<property name="javax.persistence.jdbc.url" value="jdbc:mysql://218.151.225.131:3306/cloudsc?autoReconnect=true" />
-	            <property name="javax.persistence.jdbc.user" value="openpaas" />
-	            <property name="javax.persistence.jdbc.password" value="openpaas123" />	
+        		<property name="javax.persistence.jdbc.url" value="jdbc:mysql://218.151.225.131:3306/cloudsc_test?autoReconnect=true" />
+	            <property name="javax.persistence.jdbc.user" value="openpaas_test" />
+	            <property name="javax.persistence.jdbc.password" value="openpaas_test123" />	
 	            <property name="hibernate.show_sql" value="true" />
-            	<!--  <property name="hibernate.hbm2ddl.auto" value="create" />-->
+            	<property name="hibernate.hbm2ddl.auto" value="create" />
         	</properties>
         </persistence-unit>
 </persistence>
