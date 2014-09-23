@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2014. 9. 23 ???? 1:21:50 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+ <class name="kr.cloudsc.openpaas.model.User" table="TB_USER_20140923">
+  <id name="user_seq" type="int">
+   <column name="USER_SEQ"/>
+   <generator class="increment"/>
+  </id>
+  <property generated="never" lazy="false" name="public_nm" type="java.lang.String">
+   <column name="PUBLIC_NM"/>
+  </property>
+  <property generated="never" lazy="false" name="mobile_num" type="java.lang.String">
+   <column name="MOBILE_NUM"/>
+  </property>
+  <property generated="never" lazy="false" name="email" type="java.lang.String">
+   <column name="EMAIL"/>
+  </property>
+  <property generated="never" lazy="false" name="passwd" type="java.lang.String">
+   <column name="PASSWD"/>
+  </property>
+  <property generated="never" lazy="false" name="update_dt" type="java.util.Date">
+   <column name="UPDATE_DT"/>
+  </property>
+  <property generated="never" lazy="false" name="insert_dt" type="java.util.Date">
+   <column name="INSERT_DT"/>
+  </property>
+  <property generated="never" lazy="false" name="status" type="char">
+   <column name="STATUS"/>
+  </property>
+  <property generated="never" lazy="false" name="charge_nm" type="java.lang.String">
+   <column name="CHARGE_NM"/>
+  </property>
+  <property generated="never" lazy="false" name="gear_kind" type="java.lang.String">
+   <column name="GEAR_KIND"/>
+  </property>
+  <property generated="never" lazy="false" name="gear_cnt" type="int">
+   <column default="0" name="GEAR_CNT" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="secretkey" type="java.lang.String">
+   <column name="SECRETKEY"/>
+  </property>
+  <property generated="never" lazy="false" name="authcode" type="java.lang.String">
+   <column name="AUTHCODE"/>
+  </property>
+  <property generated="never" lazy="false" name="usertype" type="java.lang.String">
+   <column name="USERTYPE"/>
+  </property>
+  <property generated="never" lazy="false" name="login_fail_cnt" type="int">
+   <column name="LOGIN_FAIL_CNT" not-null="true"/>
+  </property>
+ </class>
+</hibernate-mapping>
