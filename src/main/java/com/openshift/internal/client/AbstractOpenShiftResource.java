@@ -166,6 +166,11 @@ public abstract class AbstractOpenShiftResource implements IOpenShiftResource {
 		protected <DTO> DTO getData(RestResponse response) {
 			// in some cases, there is not response body, just a return code to
 			// indicate that the operation was successful (e.g.: delete domain)
+			System.out.println("********************************");
+			System.out.println("response : " + response);
+			System.out.println("response Data : " + response.getData());
+			System.out.println("response Data : " + response.getStatus());
+			System.out.println("********************************");
 			if (response == null) {
 				return null;
 			}

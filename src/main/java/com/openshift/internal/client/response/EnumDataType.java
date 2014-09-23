@@ -38,7 +38,8 @@ public enum EnumDataType {
 	/** The environment-variables type*/
 	environment_variables,
 	/** The environmetn-variable type*/
-	environment_variable
+	environment_variable,
+	deployments
 	;
 	
 	private static final Pattern pattern = Pattern.compile("-");

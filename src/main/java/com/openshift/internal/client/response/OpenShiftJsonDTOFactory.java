@@ -45,6 +45,12 @@ import static com.openshift.internal.client.utils.IOpenShiftJsonConstants.PROPER
 import static com.openshift.internal.client.utils.IOpenShiftJsonConstants.PROPERTY_UUID;
 import static com.openshift.internal.client.utils.IOpenShiftJsonConstants.PROPERTY_VALID_OPTIONS;
 import static com.openshift.internal.client.utils.IOpenShiftJsonConstants.PROPERTY_VALUE;
+import static com.openshift.internal.client.utils.IOpenShiftJsonConstants.PROPERTY_ACTIVATIONS;
+import static com.openshift.internal.client.utils.IOpenShiftJsonConstants.PROPERTY_CREATE_AT;
+import static com.openshift.internal.client.utils.IOpenShiftJsonConstants.PROPERTY_FORCE_CLEAN_BUILD;
+import static com.openshift.internal.client.utils.IOpenShiftJsonConstants.PROPERTY_HOT_DEPLOY;
+import static com.openshift.internal.client.utils.IOpenShiftJsonConstants.PROPERTY_REF;
+import static com.openshift.internal.client.utils.IOpenShiftJsonConstants.PROPERTY_SHA1;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -99,6 +105,9 @@ public class OpenShiftJsonDTOFactory implements IRestResponseFactory {
 		final Messages messages = createMessages(rootNode.get(IOpenShiftJsonConstants.PROPERTY_MESSAGES));
 
 		final EnumDataType dataType = EnumDataType.safeValueOf(type);
+		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+		System.out.println("EnumDataType : " + dataType);
+		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
 		// the response is after an error, only the messages are relevant
 		
 
@@ -138,12 +147,16 @@ public class OpenShiftJsonDTOFactory implements IRestResponseFactory {
 			return createEnvironmentVariables(rootNode);
 		case environment_variable:
 			return createEnvironmentVariable(rootNode, messages);
+		case deployments:
+			return createDeployments(rootNode, messages);
 			
 		default:
 			return null;
 		}
 	}
 	
+	
+
 	/**
 	 * Creates a new ResourceDTO object.
 	 * 
@@ -434,6 +447,50 @@ public class OpenShiftJsonDTOFactory implements IRestResponseFactory {
 				links, 
 				messages);
 	}
+	
+	private List<DeployMentResourceDTO> createDeployments(ModelNode rootNode, Messages messages) {
+		final List<DeployMentResourceDTO> deploymentsDTOs = new ArrayList<DeployMentResourceDTO>();
+		if (rootNode.has(PROPERTY_DATA)) {
+			for (ModelNode deployNode : rootNode.get(PROPERTY_DATA).asList()) {
+				deploymentsDTOs.add(createDeployment(deployNode, messages));
+			}
+		}
+		return deploymentsDTOs;
+	}
+	
+	private DeployMentResourceDTO createDeployment(ModelNode deployNode,
+			Messages messages) {
+		// TODO Auto-generated method stub
+		if (deployNode.has(PROPERTY_DATA)) {
+			// recurse into 'data' node
+			return createDeployment(deployNode.get(PROPERTY_DATA), messages);
+		}
+		System.out.println("deployNode : " + deployNode);
+		
+		
+		final String create_at = getAsString(deployNode, PROPERTY_CREATE_AT);
+		final boolean force_clean_build = getAsBoolean(deployNode, PROPERTY_FORCE_CLEAN_BUILD);
+		final boolean hot_deploy = getAsBoolean(deployNode, PROPERTY_HOT_DEPLOY);
+		final String id = getAsString(deployNode, PROPERTY_ID);
+		final String ref = getAsString(deployNode, PROPERTY_REF);	
+		final String sha1 = getAsString(deployNode, PROPERTY_SHA1);
+		System.out.println("create_at : " + create_at);
+		final List<String> activations = createActivations(deployNode.get(PROPERTY_ACTIVATIONS));
+		
+		
+		return new DeployMentResourceDTO(activations,create_at, force_clean_build, hot_deploy, id, ref, sha1, null, messages);
+	}
+
+	
+		
+		
+
+
+	
+
+	
+
+	
 
 	private GearProfile createGearProfile(ModelNode appNode) {
 		String gearProfileName = getAsString(appNode, PROPERTY_GEAR_PROFILE);
@@ -565,6 +622,30 @@ public class OpenShiftJsonDTOFactory implements IRestResponseFactory {
 			aliases.add(aliasNodesList.asString());
 		}
 		return aliases;
+	}
+	
+	
+	/**
+	 * Creates a new ResourceDTO object.
+	 * 
+	 * @param activationNodeList
+	 *            the activation node list
+	 * @return the list< string>
+	 */
+	private List<String> createActivations(ModelNode deployNode){
+		final List<String> activations = new ArrayList<String>();
+		System.out.println("deployNode.getType() : " + deployNode.getType());
+		switch(deployNode.getType()){
+		case OBJECT :
+		case LIST:
+			for(ModelNode deployNd : deployNode.asList()){
+				activations.add(deployNd.asString());
+			}
+			break;
+		default:
+			activations.add(deployNode.asString());
+		}
+		return activations;
 	}
 
 	/**

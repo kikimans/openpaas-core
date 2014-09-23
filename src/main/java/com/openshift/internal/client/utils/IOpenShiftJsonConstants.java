@@ -97,6 +97,20 @@ public class IOpenShiftJsonConstants {
 	public static final String PROPERTY_UUID = "uuid";
 	public static final String PROPERTY_VALID_OPTIONS = "valid_options";
 	public static final String PROPERTY_VALUE = "value";
+	/**
+	 * Deployments Property 
+	 * @modify kikimans.lucas@gmail.com
+	 * Start
+	 */
+	public static final String PROPERTY_ACTIVATIONS = "activations";
+	public static final String PROPERTY_CREATE_AT = "created_at";
+	public static final String PROPERTY_FORCE_CLEAN_BUILD = "force_clean_build";
+	public static final String PROPERTY_HOT_DEPLOY = "hot_deploy";	
+	public static final String PROPERTY_REF = "ref";
+	public static final String PROPERTY_SHA1 = "sha1";
+	/**
+	 * end
+	 */
 	public static final String PROPERTY_ENVIRONMENT_VARIABLES = "environment_variables";
 	/**
 	 * 2014.08.07 tags add

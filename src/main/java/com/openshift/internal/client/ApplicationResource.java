@@ -40,6 +40,7 @@ import com.jcraft.jsch.Session;
 import com.openshift.client.ApplicationScale;
 import com.openshift.client.IApplication;
 import com.openshift.client.IApplicationPortForwarding;
+import com.openshift.client.IDeployment;
 import com.openshift.client.IDomain;
 import com.openshift.client.IEnvironmentVariable;
 import com.openshift.client.IGearGroup;
@@ -55,15 +56,19 @@ import com.openshift.client.cartridge.IStandaloneCartridge;
 import com.openshift.client.cartridge.StandaloneCartridge;
 import com.openshift.client.utils.HostUtils;
 import com.openshift.client.utils.RFC822DateUtils;
+import com.openshift.internal.client.AbstractOpenShiftResource.Parameters;
 import com.openshift.internal.client.httpclient.request.StringParameter;
 import com.openshift.internal.client.response.ApplicationResourceDTO;
 import com.openshift.internal.client.response.CartridgeResourceDTO;
+import com.openshift.internal.client.response.DeployMentResourceDTO;
 import com.openshift.internal.client.response.EnvironmentVariableResourceDTO;
 import com.openshift.internal.client.response.GearGroupResourceDTO;
 import com.openshift.internal.client.response.Link;
 import com.openshift.internal.client.ssh.ApplicationPortForwarding;
 import com.openshift.internal.client.utils.Assert;
+import com.openshift.internal.client.utils.CollectionUtils;
 import com.openshift.internal.client.utils.IOpenShiftJsonConstants;
+import com.openshift.internal.client.utils.IOpenShiftParameterConstants;
 import com.openshift.internal.client.utils.StringUtils;
 
 /**
@@ -93,6 +98,11 @@ public class ApplicationResource extends AbstractOpenShiftResource implements IA
 	private static final String LINK_GET_GEAR_GROUPS = "GET_GEAR_GROUPS";
     private static final String LINK_LIST_ENVIRONMENT_VARIABLES = "LIST_ENVIRONMENT_VARIABLES";
     private static final String LINK_SET_UNSET_ENVIRONMENT_VARIABLES = "SET_UNSET_ENVIRONMENT_VARIABLES";
+    /**
+     * LIST_DEPLOYMENTS add 
+     * by kikimans.lucas@gmail.com
+     */
+    private static final String LINK_LIST_DEPLOYMENTS = "LIST_DEPLOYMENTS";
     private static final Pattern REGEX_FORWARDED_PORT = Pattern.compile("([^ ]+) -> ([^:]+):(\\d+)");
 	
 	/** The (unique) uuid of this application. */
@@ -152,6 +162,8 @@ public class ApplicationResource extends AbstractOpenShiftResource implements IA
 	 * The environment variables for this application
 	 */
 	private Map<String, IEnvironmentVariable> environmentVariablesMap;
+	
+	private List<IDeployment> deployments;
 
 
 	protected ApplicationResource(ApplicationResourceDTO dto, DomainResource domain) {
@@ -510,6 +522,41 @@ public class ApplicationResource extends AbstractOpenShiftResource implements IA
 		return this.gearGroups = gearGroups;
 	}
 	
+	@Override
+	public List<IDeployment> getDeployments() throws OpenShiftException {
+		// TODO Auto-generated method stub
+		loadDeployments();
+		return deployments;
+	}
+	
+	
+  
+	private void loadDeployments() {
+		// TODO Auto-generated method stub
+		List<IDeployment> deployments = new ArrayList<IDeployment>();
+		List<DeployMentResourceDTO> dtos = new GetDeploymentRequest().execute();
+		
+		for(DeployMentResourceDTO dto : dtos){
+			System.out.println("==========================================");
+			System.out.println("dto : " + dto);
+			System.out.println("==========================================");
+			System.out.println(dto.getActivations());
+			System.out.println(dto.getCreated_at());
+			System.out.println(dto.isForce_clean_build());
+			System.out.println(dto.isHot_deploy());
+			System.out.println(dto.getId());
+			System.out.println(dto.getRef());
+			System.out.println(dto.getSha1());
+			deployments.add(new DeployMentResource(dto, this));
+			
+		}		
+			
+		this.deployments = deployments;
+		
+		
+		
+	}
+	
 	public boolean waitForAccessible(long timeout) throws OpenShiftException {
 		try {
 			return waitForResolved(timeout, System.currentTimeMillis());
@@ -757,8 +804,10 @@ public class ApplicationResource extends AbstractOpenShiftResource implements IA
 		} catch (OpenShiftException e) {
 			return false;
 		}
-	}    
-  
+	}
+	
+	
+
 	/**
 	 * List all forwardable ports for a given application.
 	 * 
@@ -1082,6 +1131,13 @@ public class ApplicationResource extends AbstractOpenShiftResource implements IA
 			return super.execute(new Parameters().addCartridge(embeddable).toArray());
 		}
 	}
+	
+	private class GetGearGroupsRequest extends ServiceRequest {
+
+		private GetGearGroupsRequest() {
+			super(LINK_GET_GEAR_GROUPS);
+		}
+	}
 
 	private class ListCartridgesRequest extends ServiceRequest {
 
@@ -1094,10 +1150,18 @@ public class ApplicationResource extends AbstractOpenShiftResource implements IA
 		}
 	}
 	
-	private class GetGearGroupsRequest extends ServiceRequest {
+	private class GetDeploymentRequest extends ServiceRequest {
 
-		private GetGearGroupsRequest() {
-			super(LINK_GET_GEAR_GROUPS);
+		private GetDeploymentRequest() {
+			super(LINK_LIST_DEPLOYMENTS);
+		}
+		
+		protected <DTO> DTO execute() throws OpenShiftException {
+			// ?include=cartridges
+			Parameters urlParameters = new Parameters()
+					.include(IOpenShiftParameterConstants.PARAMETER_DEPLOYMENTS);
+
+			return super.execute(urlParameters.toList());
 		}
 	}
 	
@@ -1133,4 +1197,6 @@ public class ApplicationResource extends AbstractOpenShiftResource implements IA
 		}
 	}
 
+	
+	
  }

@@ -507,5 +507,14 @@ public interface IApplication extends IOpenShiftResource {
 	 * @see ApplicationResource#LINK_SET_UNSET_ENVIRONMENT_VARIABLES
 	 */
 	public boolean canUpdateEnvironmentVariables();
+	
+	/**
+	 * Return the deployment variable for the specified name
+	 * 
+	 * @param name key to be used to locate the environment variable
+	 * @return IEnvironmentVariable associated with the provided key
+	 * @throws OpenShiftSSHOperationException - thrown if the key does not exist
+	 */
+	public List<IDeployment> getDeployments() throws OpenShiftException;
 
 }

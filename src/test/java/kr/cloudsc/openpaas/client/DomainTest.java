@@ -70,6 +70,19 @@ public class DomainTest {
 		assertThat(apps.isEmpty(), is(false));	
 	}
 	
+	@Test
+	public void test_생성된_Application_deploycheck(){
+		IUser _user = conn.getUser();		
+		IDomain domain = _user.getDomain("test1");
+		List<IApplication> apps = domain.getApplications(); 	
+		System.out.println(apps);
+		for(IApplication app : apps){
+			
+			System.out.println("APP NAME : " + app.getName());
+			System.out.println("DE : " + app.getDeployments());
+		}
+	}
+	
 	
 
 }
